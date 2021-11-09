@@ -7,11 +7,17 @@
 ## Index 
 - [Introduction](#intro)
 - [Set up your Ubuntu Server](#setup-ubuntu)
+
 --- [Create a Sub user](#subuser)
+
 --- [Create SSH keys for each user](#createkeys)
+
 --- [Create SSH profiles for each user](#sshprofile)
+
 --- [Enfore all users to use 2FA](#force_2fa)
+
 --- [Require three forms of ID](#three_forms)
+
 - [Prepare LXC container](#prep)
 - [Install mongodb](#install-mongo)
 - [Secure mongodb](#secure-mongo)
