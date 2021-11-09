@@ -4,32 +4,27 @@
 
 ---
 
+
 ## Index 
-- [Introduction](#intro)
-- [Set up your Ubuntu Server](#setup-ubuntu)
-
---- [Create a Sub user](#subuser)
-
---- [Create SSH keys for each user](#createkeys)
-
---- [Create SSH profiles for each user](#sshprofile)
-
---- [Enfore all users to use 2FA](#force_2fa)
-
---- [Require three forms of ID](#three_forms)
-
-- [Prepare LXC container](#prep)
-- [Install mongodb](#install-mongo)
-- [Secure mongodb](#secure-mongo)
-- [Clone repo & build](#clone-repo)
+- [Introduction](#introduction)
+- [Set up your Ubuntu Server](#set-up-your-ubuntu-server)
+-- [Create a Sub user](#create-a-sub-user)
+-- [Create SSH keys for each user](#create-ssh-keys-for-each-user-and-send-the-keys-to-the-server)
+-- [Create SSH profiles for each user](#create-ssh-profiles-for-each-user)
+-- [Set up two factor authentication](#set-up-two-factor-authentication)
+-- [Require three forms of ID](#require-three-forms-of-id)
+- [Prepare LXC container](#prepare-lxc-container)
+- [Install mongodb](#install-latest-mongodb)
+- [Secure mongodb](#secure-mongodb)
+- [Clone repo & build](#clone-voip-repo--build)
 - [Configure repo](#configure-repo)
-- [Configure Nginx](#nginx)
-- [Configure the Firewall](#firewall)
-- [Configure Certbot](#configure_certbot)
-- [Install Certbot](#install_certbot)
-- [Get your certificates](#get_certbot)
-- [Configure Telnyx](#telnyx)
-- [Run it](#run)
+- [Configure Nginx](#nginx-reverse-proxy)
+- [Configure the Firewall](#configure-the-firewall)
+- [Configure Certbot](#configure-certbot)
+- [Install Certbot](#install-certbot)
+- [Get your certificates](#get-your-certificates)
+- [Configure Telnyx](#configure-telnyx)
+- [Run it](#run-it)
 - [Last Minute Notes](#notes)
 
 ## <a href="intro">Introduction</a>
