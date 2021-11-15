@@ -60,8 +60,9 @@ tl;dr
 
 We will be creating a subuser called `second`, but feel free to call your subuser whatever you want. To create the subuser, run these commands in order
 
-`adduser sammy`
-`usermod -aG sudo sammy`
+> `adduser subuser`
+
+> `usermod -aG sudo subuser`
 
 These two commands create the subuser and then adds the subuser to the sudo user group
 
@@ -91,26 +92,26 @@ To create your users ssh config file, run this command `nano ~/.ssh/config`. You
 
 If you do not have an existing config file, pase the following into the file
 
-Host rootSMS
-	HostName remote.server.ip.address
-	Port 22
-	User root
-	IdentityFile ~/.ssh/root_rsa
-	IdentitiesOnly yes
+> Host rootSMS
+> 	HostName remote.server.ip.address
+> 	Port 22
+> 	User root
+> 	IdentityFile ~/.ssh/root_rsa
+> 	IdentitiesOnly yes
 
-Host secondSMS
-	HostName remote.server.ip.address
-	Port 22 
-	User second
-	IdentityFile ~/.ssh/second_rsa
-	IdentitiesOnly yes
+> Host secondSMS
+> 	HostName remote.server.ip.address
+> 	Port 22 
+> 	User second
+> 	IdentityFile ~/.ssh/second_rsa
+> 	IdentitiesOnly yes
 
-Host # Nickname of connection
-	HostName # Enter the remote IP address
-	Port # Defaults at 22. Refer to [this article](https://linuxize.com/post/how-to-change-ssh-port-in-linux/) to change your ssh port
-	User # The username used to login with
-	IdentityFile # Location of the SSH public key
-	IdentitiesOnly yes # Requires the use of the identityFile. Prevents errors.
+> Host # Nickname of connection
+> 	HostName # Enter the remote IP address
+> 	Port # Defaults at 22. Refer to [this article](https://linuxize.com/post/how-to-change-ssh-port-in-linux/) to change your ssh port
+> 	User # The username used to login with
+> 	IdentityFile # Location of the SSH public key
+> 	IdentitiesOnly yes # Requires the use of the identityFile. Prevents errors.
 
 With this now complete, you can open two terminals and run `ssh rootSMS` in one and `ssh secondSMS` in the other. This will establish an SSH connection to both accounts into your remote server. 
 Once connected, in each terminal run `chmod -R go= ~/.ssh`. This recursively removes all “group” and “other” permissions from the ~/.ssh directory. 
@@ -177,70 +178,73 @@ At this point to ensure everything is working as it should, run `ssh rootsms -v`
 ---
 ## <a href="prep">Prepare LXC Container</a>
 
-`lxc --version` : confirms that LXC is installed on your Linux instance.
+> `lxc --version` : confirms that LXC is installed on your Linux instance.
 
 **IF THIS IS YOUR FIRST USE OF LXC**, you need to first run `lxd init`.  There will be a bunch of questions, most of which can be answered using the default option (press `enter`).  I suggest you follow https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-lxd-on-ubuntu-20-04 for the detail.
 
 If you have done `lxd init`, then these are the basic steps you need to take to fire up a container.
 
-`lxc launch ubuntu:20.04 <containername>` : creates a new Ubuntu 20.04 container with your chosen name.  First time may take a few minutes to download the OS image.  
+> `lxc launch ubuntu:20.04 <containername>` : creates a new Ubuntu 20.04 container with your chosen name.  First time may take a few minutes to download the OS image.  
 
-`lxc exec <containername> -- /bin/bash` : enter the container as root (similar to normal Linux su user).  Note shell prompt should change.
+> `lxc exec <containername> -- /bin/bash` : enter the container as root (similar to normal Linux su user).  Note shell prompt should change.
  
-`hostname` : should confirm you're in the right place
+> `hostname` : should confirm you're in the right place
   
-`apt-get update && apt-get upgrade -y` : ensures latest packages 
+> `apt-get update && apt-get upgrade -y` : ensures latest packages 
 
-`apt autoremove -y` : tidy up
+> `apt autoremove -y` : tidy up
   
 ---
 ## <a href="install-mongo">Install Latest MongoDB</a>
 Ubuntu has an old version of mongo db (v3.x).  You probably want the latest version.
 For full details, please read the excellent guide at https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-20-04
  
-`curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -`
+> `curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -`
  
-`echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list`
+> `echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list`
  
-`apt-get update -y`
+> `apt-get update -y`
  
-`apt install mongodb-org -y`
+> `apt install mongodb-org -y`
  
-`systemctl start mongod.service`
+> `systemctl start mongod.service`
 
-`systemctl status mongod`
+> `systemctl status mongod`
  
 That should show a running mongo instance.  If not, check the detailed guide linked above.
  
-`systemctl enable mongod`
+> `systemctl enable mongod`
  
-`mongo --eval 'db.runCommand({ connectionStatus: 1 })'`
+> `mongo --eval 'db.runCommand({ connectionStatus: 1 })'`
  
-`systemctl status mongod`
+> `systemctl status mongod`
 
 ---
 ## <a href="secure-mongo">secure mongodb</a>
 You probably want a secure mongo db.
 The following is an abstract of excellent guide at https://www.digitalocean.com/community/tutorials/how-to-secure-mongodb-on-ubuntu-20-04
 
- `mongo` : enters interactive shell - enter these commands line by line
+ > `mongo` : enters interactive shell - enter these commands line by line
+	
   ```
-	show dbs
-	use admin
-	db.createUser(
-	{
-	user: "mongoadmin",
-	pwd: passwordPrompt(),
-	roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
-	}
-	)
+	> show dbs
+	
+	> use admin
+	
+	> db.createUser(
+	> {
+	> user: "mongoadmin",
+	> pwd: passwordPrompt(),
+	> roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
+	> }
+	> )
  ```
 Closing bracket complete the command : you should be prompted for your password and then get a confirmation message that user created successfully.
 
 Then `exit` the mongo shell and return to the container command line 
 
 
-`nano /etc/mongod.conf`. : <blatant plug : use `ne` editor, it's much nicer, `apt install ne -y`>
+> `nano /etc/mongod.conf`. : <blatant plug : use `ne` editor, it's much nicer, `apt install ne -y`>
 
 Find the line which says `#security` and remove the hash symbol
 
@@ -260,29 +264,29 @@ security:
 ```
 save the file and quit it
  
-`systemctl restart mongod`
+> `systemctl restart mongod`
  
-`systemctl status mongod`
+> `systemctl status mongod`
  
-`mongo -u mongoadmin -p --authenticationDatabase admin`
+> `mongo -u mongoadmin -p --authenticationDatabase admin`
  
-`show dbs` : confirms you can see databases currently installed (nothing much) 
+> `show dbs` : confirms you can see databases currently installed (nothing much) 
 
- `exit`
+>  `exit`
 
 ---
 ## <a href="clone-repo">clone VoIP repo & build</a>
 Now we can get going ...
 
-`git clone https://github.com/0perationPrivacy/VoIP/`
+> `git clone https://github.com/0perationPrivacy/VoIP/`
 
-`cd VoIP`
+> `cd VoIP`
  
-`apt install nodejs -y`
+> `apt install nodejs -y`
  
-`apt install npm -y`
+> `apt install npm -y`
  
-`npm install`
+> `npm install`
 
 ---
 ## <a href="configure-repo">Configure Repo</a>
@@ -290,7 +294,7 @@ The following is not particularly clear (at time of writing anyway) from the off
 	
 And it is the magic which makes it all work. 
 
-`nano .env` or use your favourite editor (cough : `ne`)
+> `nano .env` or use your favourite editor (cough : `ne`)
 
 ensure that the following is set up (not specified in the repo sample .env) : you can leave the other lines
 ```
@@ -310,11 +314,23 @@ NB : as per Troubleshooting, ensure the `BASE_URL` has protocol (https) not just
 - but that's only fine for outbound traffic : you need inbound traffic (doh!) as well
 - your installation may be different but in my case I need `nginx` running on the VPS and then a `nginx` conf file to direct traffic to the container
 - do `lxc list` to get the local ip address of your container : you need it for the nginx conf file
-- create the conf file :  `nano /etc/nginx/sites-available/<domain>.<tld>`
+- create the conf file:  
+				      
+> `nano /etc/nginx/sites-available/<domain>.<tld>`
+	
+- enable it:
+	
+> `ln -s /etc/nginx/sites-available/<domain>.<tld> /etc/nginx/sites-enabled/<domain>.<tld> `
+	
+- check config:
+	
+> `nginx -t`
+	
+- reload config:
+	
+> `systemctl reload nginx`
+	
 - sample nginx conf file below pre-SSL enabling
-- enable it : `ln -s /etc/nginx/sites-available/<domain>.<tld> /etc/nginx/sites-enabled/<domain>.<tld> `
-- check config : `nginx -t`
-- reload config : `systemctl reload nginx`
 
 sample nginx conf file as BEFORE you do your certbot dance to get https enabled :
 ```
@@ -411,11 +427,13 @@ But note the following :
 ## <a href="run">Run It</a>!
 You should be all set to fire it up.
 
-Go back into your container : `lxc exec <containername> -- /bin/bash`
-
-`cd VoIP`
+Go back into your container:
 	
-`node app.js &`
+> `lxc exec <containername> -- /bin/bash`
+
+> `cd VoIP`
+	
+> `node app.js &`
 
 Then visit your installation URL, sign up for an account (your own), and add a "Profile" which configures the service provider (Telnyx or Twilio) and the number you will be using for SMS.
 
@@ -433,17 +451,22 @@ NB : if you later edit the `.env` to turn off signups (so others cannot hijack a
 
 ---
 ## <a href="notes">Notes</a>
-- **the big one** : config changes in the app, e.g. the `.env` file, need the profile in the browser to be deleted and re-created.  This will lead to past messages being lost.  Save them somehow if you need them. **As long as the .env file contents are the same, you can delete the entire repo, and paste in saved copy of the .env file** Accurrate as of 11/08/21
+- **the big one** : config changes in the app, e.g. the `.env` file, need the profile in the browser to be deleted and re-created.  This will lead to past messages being lost.  
 - Outbound voice works. However, there is no dial pad. So you can not "Press 1 for ..." and so on.
 - Image attachments work
 - Telnyx has rate limits to avoid sending abuse
-- The app seems to intermittently go down for 3-5 minutes at a time and then come back up. This is generally due to not leaving the LXC container, and then exiting the SSH shell properly. If you run the app with `lxc exec <containername> -- /bin/bash && cd VoIP && node app.js &` then wait for "Database Connected Successfully" to appear, and on the keyboard select Ctrl+A+D to exit the container then leave the SSH shell, you should have a 99.99999% uptime. 
+- The app seems to intermittently go down for 3-5 minutes at a time and then come back up. This is generally due to not leaving the LXC container, and then exiting the SSH shell properly. If you run the app with 
+
+> `lxc exec <containername> -- /bin/bash && cd VoIP && node app.js &`
+
+then wait for `Database Connected Successfully` to appear, and on the keyboard select Ctrl+A+D to exit the container then leave the SSH shell, you should have a 99.99999% uptime. 
 
 I haven't tested any keepalive measure to ensure the app stays running (check out notes at bottom of Michael's instructions).  I am not convinced they are needed but hey, what do I know. A self hosted "Uptime Kuma" instance is more then enough to know when it goes down, and all you need to do to get it back up is, in order, 
-1. SSH into your server
-2. run `lxc exec <containername> -- /bin/bash && cd VoIP && node app.js &` 
-3. Wait for "Database Connected Successfully" to appear
-4. Select Ctrl+A+D to exit the container then leave the SSH shell
+	
+> 1. SSH into your server
+> 2. run `lxc exec <containername> -- /bin/bash && cd VoIP && node app.js &` 
+> 3. Wait for "Database Connected Successfully" to appear
+> 4. Select Ctrl+A+D to exit the container then leave the SSH shell
 
 I hope this is helpful.
 Let me know any corrections, omissions or questions.
